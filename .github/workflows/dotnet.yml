@@ -26,6 +26,7 @@ jobs:
       run: |
         dotnet publish --configuration Release --os win -p:PublishSingleFile=true -p:PublishTrimmed=true
         cp bin/Release/net8.0/win-x64/publish/nav2wpt.exe nav2wpt.exe
+        zip -rj waypoints.zip waypoints
         
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
@@ -33,6 +34,7 @@ jobs:
         name: publish
         path: |
           nav2wpt.exe
+          waypoints.zip
           
     - name: Publish artifacts
       uses: softprops/action-gh-release@v2
@@ -41,5 +43,6 @@ jobs:
       with:
         files: |
           nav2wpt.exe
+          waypoints.zip
       env:
         GITHUB_TOKEN: ${{ secrets.API_TOKEN }}
