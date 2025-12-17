@@ -8,7 +8,7 @@ namespace nav2wpt
 {
     static class Converter
     {
-        public static void ConvertToFwp(string navPath, string bspPath, string fwpPath)
+        public static IReadOnlyList<Waypoint> GetWaypoints(string navPath, string bspPath)
         {
             var navFile = new NavFile(navPath);
 
@@ -202,8 +202,7 @@ namespace nav2wpt
                 topWaypoint.Paths.Add(newTopWaypoint);
             }
 
-            var fwpFile = new FwpFile(waypoints);
-            fwpFile.Write(fwpPath);
+            return waypoints;
         }
     }
 }

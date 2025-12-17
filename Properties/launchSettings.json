@@ -2,7 +2,7 @@
   "profiles": {
     "nav2wpt": {
       "commandName": "Project",
-      "commandLineArgs": "D:\\hlds\\cstrike\\maps D:\\hlds\\cstrike\\maps D:\\hlds\\tfc\\addons\\foxbot\\tfc\\waypoints"
+      "commandLineArgs": "D:\\hlds\\czero\\maps D:\\hlds\\cstrike\\maps foxbot d:\\projects\\goldsrc.one\\nav2wpt\\waypoints"
     }
   }
 }
