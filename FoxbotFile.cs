@@ -12,7 +12,7 @@ namespace nav2wpt
     {
         public override string Extension => ".fwp";
         protected override string Magic => "FoXBot";
-        protected override int Version => 5;
+        protected override uint Version => 5;
 
         protected override void WriteWaypoint(Waypoint waypoint)
         {

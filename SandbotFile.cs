@@ -12,7 +12,7 @@ namespace nav2wpt
     {
         public override string Extension => ".wpt";
         protected override string Magic => "Sandbot";
-        protected override int Version => 1;
+        protected override uint Version => 1;
 
         protected override void WriteWaypoint(Waypoint waypoint)
         {

@@ -10,6 +10,7 @@ namespace nav2wpt
     {
         public ushort Index { get; set; }
         public float[] Position { get; set; } = new float[3];
+        public float[] Size { get; set; } = new float[2];
         public List<Waypoint> Paths { get; set; } = new();
         public bool Crouch { get; set; } = false;
         public bool Jump { get; set; } = false;

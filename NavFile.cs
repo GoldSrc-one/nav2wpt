@@ -11,6 +11,7 @@ namespace nav2wpt
     {
         public uint Id { get; set; }
         public float[] Center { get; set; } = new float[3];
+        public float[] Size { get; set; } = new float[2];
         public List<uint> Connections { get; set; } = new();
         public byte Attributes { get; set; } = 0;
     }
@@ -67,8 +68,12 @@ namespace nav2wpt
                     extents[iExt] = BitConverter.ToSingle(bytes, pos);
                     pos += 4;
                 }
+                
                 for (int iAxis = 0; iAxis < 3; iAxis++)
                     navArea.Center[iAxis] = (extents[iAxis] + extents[iAxis + 3]) / 2;
+
+                for (int iAxis = 0; iAxis < 2; iAxis++)
+                    navArea.Size[iAxis] = extents[iAxis + 3] - extents[iAxis];
 
                 for (int iDir = 0; iDir < 4; iDir++)
                 {

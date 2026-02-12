@@ -26,6 +26,7 @@ namespace nav2wpt
                 var waypoint = new Waypoint();
                 waypoint.Index = (ushort)waypoints.Count;
                 waypoint.Position = navArea.Center;
+                waypoint.Size = navArea.Size;
                 if ((navArea.Attributes & 1) == 1)
                     waypoint.Crouch = true;
 

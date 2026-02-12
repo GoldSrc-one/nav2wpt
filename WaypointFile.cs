@@ -11,7 +11,7 @@ namespace nav2wpt
     {
         public abstract string Extension { get; }
         protected abstract string Magic { get; }
-        protected abstract int Version { get; }
+        protected abstract uint Version { get; }
 
         protected abstract void WriteWaypoint(Waypoint waypoint);
 
@@ -20,36 +20,42 @@ namespace nav2wpt
         protected List<byte> Bytes => _bytes;
         private string _filePath = "";
         private IReadOnlyList<Waypoint> _waypoints = [];
+        protected IReadOnlyList<Waypoint> Waypoints => _waypoints;
+
+        protected void WriteFixedString(string text, int length)
+        {
+            var textBytes = Encoding.UTF8.GetBytes(text);
+            _bytes.AddRange(textBytes);
+            _bytes.AddRange(Enumerable.Repeat((byte)0, length - textBytes.Length));
+        }
 
         public void Write(string filePath, IReadOnlyList<Waypoint> waypoints)
         {
             _filePath = filePath;
             _waypoints = waypoints;
-            WriteHeader(Magic, Version);
+            WriteHeader(Magic, Version, 0, (uint)_waypoints.Count);
 
             foreach (var waypoint in _waypoints)
                 WriteWaypoint(waypoint);
 
-            WritePaths();
-
-            var author = Encoding.ASCII.GetBytes(Author);
-            _bytes.AddRange(author);
-            _bytes.AddRange(Enumerable.Repeat((byte)0, 255 - author.Length));
+            WriteFooter();
 
             File.WriteAllBytes(_filePath, _bytes.ToArray());
         }
 
-        protected void WriteHeader(string magic, int version)
+        protected virtual void WriteHeader(string magic, uint version, uint flags, uint numWaypoints)
         {
-            var magicBytes = Encoding.ASCII.GetBytes(magic);
-            _bytes.AddRange(magicBytes);
-            _bytes.AddRange(Enumerable.Repeat((byte)0, 8 - magicBytes.Length));
-            _bytes.AddRange(BitConverter.GetBytes((uint)version));
-            _bytes.AddRange(BitConverter.GetBytes((uint)0));
-            _bytes.AddRange(BitConverter.GetBytes((uint)_waypoints.Count));
-            var mapName = Encoding.ASCII.GetBytes(Path.GetFileNameWithoutExtension(_filePath));
-            _bytes.AddRange(mapName);
-            _bytes.AddRange(Enumerable.Repeat((byte)0, 32 - mapName.Length));
+            WriteFixedString(magic, 8);
+            _bytes.AddRange(BitConverter.GetBytes(version));
+            _bytes.AddRange(BitConverter.GetBytes(flags));
+            _bytes.AddRange(BitConverter.GetBytes(numWaypoints));
+            WriteFixedString(Path.GetFileNameWithoutExtension(_filePath), 32);
+        }
+
+        protected virtual void WriteFooter()
+        {
+            WritePaths();
+            WriteFixedString(Author, 255);
         }
 
         protected void WritePaths()
@@ -63,5 +69,15 @@ namespace nav2wpt
         }
 
         public static string Author = $"{nameof(nav2wpt)} v{Assembly.GetExecutingAssembly().GetName().Version}";
+
+        public virtual string AuthorFromFile(string filename)
+        {
+            var authorBytes = new byte[255];
+            using var wf = File.OpenRead(filename);
+            wf.Position = wf.Length - authorBytes.Length;
+            wf.Read(authorBytes);
+            var author = Encoding.ASCII.GetString(authorBytes.TakeWhile(b => b != 0).ToArray());
+            return author;
+        }
     }
 }
