@@ -27,6 +27,7 @@ jobs:
         dotnet publish --configuration Release --os win -p:PublishSingleFile=true -p:PublishTrimmed=true
         cp bin/Release/net8.0/win-x64/publish/nav2wpt.exe nav2wpt.exe
         zip -rj waypoints-foxbot.zip waypoints/foxbot
+        zip -rj waypoints-marine_bot.zip waypoints/marine_bot
         
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
@@ -35,6 +36,7 @@ jobs:
         path: |
           nav2wpt.exe
           waypoints-foxbot.zip
+          waypoints-marine_bot.zip
           
     - name: Publish artifacts
       uses: softprops/action-gh-release@v2
@@ -44,5 +46,6 @@ jobs:
         files: |
           nav2wpt.exe
           waypoints-foxbot.zip
+          waypoints-marine_bot.zip
       env:
         GITHUB_TOKEN: ${{ secrets.API_TOKEN }}
